@@ -4,3 +4,14 @@ out
 *.tsbuildinfo
 next-env.d.ts
 *.log
+
+# env files
+.env*
+!.env.example
+*.zip
+*.tmp
+
+*.zip
+*.tmp
+.vercel
+
