@@ -75,7 +75,7 @@ function Product({ progress }: { progress: MutableRefObject<number> }) {
 export default function MorphScene({ progress, running, onReady }: { progress: MutableRefObject<number>; running: boolean; onReady: () => void }) {
   const mobile = typeof window !== "undefined" && window.innerWidth < 768;
   return (
-    <Canvas frameloop={running ? "always" : "demand"} dpr={[1, mobile ? 1.25 : 1.5]} camera={{ position: [0, mobile ? -0.6 : 0, mobile ? 16 : 9.5], fov: 30 }} gl={{ antialias: true, alpha: true }}>
+    <Canvas frameloop={running ? "always" : "demand"} dpr={[1, mobile ? 1.25 : 1.5]} camera={{ position: [0, mobile ? -1.6 : 0, mobile ? 16 : 9.5], fov: 30 }} gl={{ antialias: true, alpha: true }}>
       <Env />
       <ambientLight intensity={0.4} />
       <directionalLight position={[3, 6, 8]} intensity={1.8} />

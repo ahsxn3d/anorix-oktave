@@ -99,6 +99,34 @@ export function Detail() {
   );
 }
 
+
+const faqs = [
+  ["What does reserving cost?", "Nothing today. When your slot opens you get 72 hours to pay a €49 deposit, fully refundable until the pair ships."],
+  ["When does Drop 01 ship?", "From March 2027, in reservation order. Your confirmation email shows your number in the queue."],
+  ["What is in the box?", "Oktave H1, a felt travel case, a USB-C to USB-C cable, a 3.5 mm cable and a spare set of cushions."],
+  ["Can I repair them?", "Yes. Cushions, headband pad and battery are held by screws, not glue. Parts are sold at cost for five years."],
+];
+export function Faq() {
+  const [o, setO] = useState(0);
+  return (
+    <section className="bg-chalk py-[clamp(88px,10vw,150px)] text-ink">
+      <div className="wrap grid gap-10 lg:grid-cols-12">
+        <div className="lg:col-span-4"><p className="mono text-mute">04 / Before you reserve</p><h2 className="display mt-5 text-[clamp(44px,5.4vw,88px)]" data-reveal="lines">Straight answers.</h2></div>
+        <div className="lg:col-span-7 lg:col-start-6">
+          {faqs.map(([q, a], k) => (
+            <div key={q} className="border-b border-ink/15">
+              <button aria-expanded={o === k} onClick={() => setO(o === k ? -1 : k)} className="flex w-full items-center justify-between gap-6 py-6 text-left text-[clamp(20px,1.8vw,26px)] font-medium">
+                {q}<span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-ink/20 transition-transform duration-500 ${o === k ? "rotate-45" : ""}`}>+</span>
+              </button>
+              <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(.16,1,.3,1)] ${o === k ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}><p className="overflow-hidden text-[16px] leading-relaxed text-ink/70"><span className="block max-w-[60ch] pb-6">{a}</span></p></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function useCountdown(target: number) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => { setNow(Date.now()); const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
@@ -115,8 +143,8 @@ export function Reserve() {
         <div className="lg:col-span-7">
           <p className="mono">Drop 01 · 2,000 units</p>
           <h2 className="display mt-5 text-[clamp(60px,10vw,170px)]" data-reveal="chars">Reserve.</h2>
-          <div className="mt-10 grid max-w-[560px] grid-cols-4 gap-3">
-            {["Days", "Hours", "Min", "Sec"].map((l, k) => <div key={l} className="rounded-[18px] bg-ink p-4 text-volt"><p className="display text-[clamp(36px,4vw,60px)] tabular-nums">{t[k]}</p><p className="mono mt-1 text-bone/70">{l}</p></div>)}
+          <div className="mt-10 grid max-w-[560px] grid-cols-4 gap-2 sm:gap-3">
+            {["Days", "Hours", "Min", "Sec"].map((l, k) => <div key={l} className="min-w-0 rounded-[18px] bg-ink p-3 text-volt sm:p-4"><p className="display text-[clamp(28px,4vw,60px)] tabular-nums">{t[k]}</p><p className="mono mt-1 text-bone/70">{l}</p></div>)}
           </div>
         </div>
         <div className="relative lg:col-span-5">
