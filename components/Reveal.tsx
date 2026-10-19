@@ -10,6 +10,8 @@ export default function Reveal() {
   const root = useRef<HTMLElement>(null);
   const frame = useRef(0);
   const [ch, setCh] = useState(0);
+  const [fit, setFit] = useState(0.8);
+  useEffect(() => { const q = window.matchMedia("(max-width: 767px)"); const f = () => setFit(q.matches ? 0.86 : 0.8); f(); q.addEventListener("change", f); return () => q.removeEventListener("change", f); }, []);
   useEffect(() => {
     const bar = root.current!.querySelector<HTMLElement>(".r-bar");
     const st = ScrollTrigger.create({ trigger: root.current, start: "top top", end: "bottom bottom", onUpdate: (s) => {
@@ -25,10 +27,10 @@ export default function Reveal() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#f9f9f7_0%,#efefec_60%)]" />
         <Image src="/img/okt-mark.webp" alt="The Oktave mark: one continuous band" fill priority sizes="100vw" className="object-cover max-md:hidden" />
         <Image src="/img/okt-mark-m.webp" alt="" fill priority sizes="100vw" className="object-cover md:hidden" />
-        <Sequence frame={frame} count={61} dir="/seq/d" mdir="/seq/m" />
+        <Sequence frame={frame} count={61} dir="/seq/d" mdir="/seq/m" fit={fit} lift={0.08} />
         <div className="wrap pointer-events-none relative flex h-full flex-col justify-between pb-8 pt-24">
           <div className="flex justify-between"><span className="mono text-mute">Prelaunch · Drop 01</span><span className="mono hidden text-mute md:block">Scroll</span></div>
-          <div className="relative min-h-[200px]">
+          <div className="relative mb-8 mt-auto min-h-[200px]">
             <div className={`absolute inset-x-0 bottom-0 ${vis(0)}`}>
               <h1 className="display text-center text-[clamp(72px,17vw,280px)]"><span className="kit-mask"><span className="kit-line">Oktave</span></span></h1>
             </div>
