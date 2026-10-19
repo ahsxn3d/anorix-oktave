@@ -33,9 +33,12 @@ export default function Lazy3D({ poster, alt = "", render, className = "", prior
     const evs = ["pointermove", "pointerdown", "wheel", "touchstart", "keydown", "scroll"] as const;
     const wake = () => { woke = true; evs.forEach((e) => window.removeEventListener(e, wake)); if (near) setMount(true); };
     evs.forEach((e) => window.addEventListener(e, wake, { passive: true }));
-    const io = new IntersectionObserver(([e]) => { near = e.isIntersecting; if (near && woke) setMount(true); setRunning(e.isIntersecting); }, { rootMargin: eager ? "200% 0px" : "150% 0px" });
+    const io = new IntersectionObserver(([e]) => { near = e.isIntersecting; if (near && woke) setMount(true); }, { rootMargin: eager ? "200% 0px" : "150% 0px" });
     io.observe(el);
-    return () => { io.disconnect(); evs.forEach((e) => window.removeEventListener(e, wake)); };
+    // render loop only while actually on screen (mount stays warm off-screen, frames stop)
+    const vis = new IntersectionObserver(([e]) => setRunning(e.isIntersecting), { rootMargin: "5% 0px" });
+    vis.observe(el);
+    return () => { io.disconnect(); vis.disconnect(); evs.forEach((e) => window.removeEventListener(e, wake)); };
   }, [eager]);
   useEffect(() => {
     if (!mount) return;
