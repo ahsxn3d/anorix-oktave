@@ -1,20 +1,19 @@
 "use client";
-import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lazy3D from "./kit/Lazy3D";
-const MorphScene = dynamic(() => import("./MorphScene"), { ssr: false });
+import Sequence from "./Sequence";
 
 const notes = [["40 mm", "graphene driver"], ["62 h", "battery, ANC on"], ["248 g", "all-in weight"]];
 
 export default function Reveal() {
   const root = useRef<HTMLElement>(null);
-  const progress = useRef(0);
+  const frame = useRef(0);
   const [ch, setCh] = useState(0);
   useEffect(() => {
     const bar = root.current!.querySelector<HTMLElement>(".r-bar");
     const st = ScrollTrigger.create({ trigger: root.current, start: "top top", end: "bottom bottom", onUpdate: (s) => {
-      progress.current = s.progress; const c = s.progress < 0.22 ? 0 : s.progress < 0.6 ? 1 : 2; setCh((p) => (p === c ? p : c));
+      frame.current = s.progress * 60; const c = s.progress < 0.22 ? 0 : s.progress < 0.6 ? 1 : 2; setCh((p) => (p === c ? p : c));
       if (bar) bar.style.transform = `scaleX(${s.progress})`;
     } });
     return () => st.kill();
@@ -24,7 +23,9 @@ export default function Reveal() {
     <section ref={root} className="relative h-[300vh] bg-bone">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#f9f9f7_0%,#efefec_60%)]" />
-        <Lazy3D poster="/img/okt-mark.webp" priority eager render={({ onReady, running }) => <MorphScene progress={progress} running={running} onReady={onReady} />} />
+        <Image src="/img/okt-mark.webp" alt="The Oktave mark: one continuous band" fill priority sizes="100vw" className="object-cover max-md:hidden" />
+        <Image src="/img/okt-mark-m.webp" alt="" fill priority sizes="100vw" className="object-cover md:hidden" />
+        <Sequence frame={frame} count={61} dir="/seq/d" mdir="/seq/m" />
         <div className="wrap pointer-events-none relative flex h-full flex-col justify-between pb-8 pt-24">
           <div className="flex justify-between"><span className="mono text-mute">Prelaunch · Drop 01</span><span className="mono hidden text-mute md:block">Scroll</span></div>
           <div className="relative min-h-[200px]">
