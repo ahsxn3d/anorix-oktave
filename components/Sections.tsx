@@ -1,0 +1,143 @@
+"use client";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { Arrow, Marquee } from "./kit/ui";
+
+export function Nav() {
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 mix-blend-difference text-white">
+      <div className="wrap flex items-center justify-between pt-5">
+        <a href="#" className="display text-[22px] tracking-[-0.04em]" aria-label="Oktave home">Oktave</a>
+        <nav aria-label="Primary" className="mono hidden gap-8 md:flex">{[["Product", "#colors"], ["Sound", "#sound"], ["Reserve", "#reserve"]].map(([l, h]) => <a key={l} href={h} className="opacity-80 transition-opacity hover:opacity-100">{l}</a>)}</nav>
+        <a href="#reserve" className="mono rounded-full border border-white/60 px-4 py-2">Reserve</a>
+      </div>
+    </header>
+  );
+}
+
+const colors = [["Graphite", "okt-graphite", "#2b2b2d"], ["Bone", "okt-bone", "#e6e2da"], ["Volt", "okt-chart", "#d7ff3b"]];
+export function Colorways() {
+  const [i, setI] = useState(0);
+  return (
+    <section id="colors" className="bg-chalk py-[clamp(88px,10vw,150px)]">
+      <div className="wrap">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <h2 className="display text-[clamp(52px,8vw,132px)]" data-reveal="lines">Three<br />finishes.</h2>
+          <div role="tablist" aria-label="Finish" className="flex gap-2">
+            {colors.map(([n, , c], k) => <button key={n} role="tab" aria-selected={i === k} onClick={() => setI(k)} className={`mono flex items-center gap-2 rounded-full border px-4 py-2.5 transition-colors ${i === k ? "border-ink bg-ink text-bone" : "border-ink/20"}`}><span className="h-3 w-3 rounded-full border border-ink/20" style={{ background: c }} />{n}</button>)}
+          </div>
+        </div>
+        <div data-clip className="relative mt-12 aspect-[4/3] overflow-hidden rounded-[28px] md:aspect-[16/9]">
+          {colors.map(([n, img], k) => (
+            <div key={n} data-clip-img={k === 0 ? "" : undefined} className={`absolute inset-0 transition-opacity duration-700 ${i === k ? "opacity-100" : "opacity-0"}`}>
+              <Image src={`/img/${img}.webp`} alt={`Oktave H1 in ${n}`} fill sizes="100vw" className="object-cover" />
+            </div>
+          ))}
+          <span className="mono absolute bottom-5 left-5 rounded-full bg-chalk/90 px-3 py-2">{colors[i][0]} · €349</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Wave() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current!; const g = c.getContext("2d")!; let raf = 0, vis = false;
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; if (vis) { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); } });
+    io.observe(c);
+    const size = () => { const r = c.getBoundingClientRect(); c.width = r.width * Math.min(2, devicePixelRatio); c.height = r.height * Math.min(2, devicePixelRatio); };
+    size(); const ro = new ResizeObserver(size); ro.observe(c);
+    function draw(t: number) {
+      const w = c.width, h = c.height, n = 96, bw = w / n; g.clearRect(0, 0, w, h);
+      for (let k = 0; k < n; k++) {
+        const x = k / n, env = Math.sin(x * Math.PI);
+        const v = env * (0.35 + 0.65 * Math.abs(Math.sin(t * 0.0016 + k * 0.33) * Math.cos(t * 0.0009 + k * 0.11)));
+        const bh = Math.max(2, v * h * 0.9);
+        g.fillStyle = k % 9 === 0 ? "#d7ff3b" : "rgba(239,239,236,.85)";
+        g.fillRect(k * bw + bw * 0.25, (h - bh) / 2, bw * 0.5, bh);
+      }
+      if (vis) raf = requestAnimationFrame(draw);
+    }
+    return () => { cancelAnimationFrame(raf); io.disconnect(); ro.disconnect(); };
+  }, []);
+  return <canvas ref={ref} className="h-[220px] w-full md:h-[300px]" aria-hidden="true" />;
+}
+
+export function Sound() {
+  return (
+    <section id="sound" className="bg-ink py-[clamp(88px,10vw,150px)] text-bone">
+      <div className="wrap">
+        <p className="mono text-bone/60">02 / Sound</p>
+        <h2 className="display mt-5 max-w-[12ch] text-[clamp(52px,8vw,132px)]" data-reveal="lines">Quiet, then everything.</h2>
+        <div className="mt-12 rounded-[28px] border border-bone/10 bg-graphite/60 p-6 md:p-10" data-fade>
+          <div className="mono flex justify-between text-bone/60"><span>Live · adaptive ANC</span><span className="text-volt">−42 dB</span></div>
+          <Wave />
+          <div className="grid grid-cols-2 gap-6 border-t border-bone/10 pt-6 md:grid-cols-4">
+            {[["4–40k", "Hz response"], ["−42", "dB noise cut"], ["6", "beamforming mics"], ["LDAC", "hi-res wireless"]].map(([a, b]) => <div key={b}><p className="display text-[clamp(32px,3.6vw,56px)]">{a}</p><p className="mono mt-1 text-bone/60">{b}</p></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Detail() {
+  return (
+    <section className="relative bg-ink text-bone">
+      <div data-clip className="relative h-[100svh] min-h-[560px] overflow-hidden">
+        <div data-clip-img className="absolute inset-0"><Image src="/img/okt-detail.webp" alt="Oktave H1 earcup detail" fill sizes="100vw" className="object-cover" /></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/10 to-transparent" />
+        <div className="wrap absolute inset-0 flex flex-col justify-end pb-16">
+          <p className="mono text-volt">03 / Material</p>
+          <h2 className="display mt-4 max-w-[10ch] text-[clamp(52px,8vw,132px)]" data-reveal="lines">Machined. Then softened.</h2>
+          <p className="mt-6 max-w-[42ch] text-[16px] leading-relaxed text-bone/75" data-fade>Bead-blasted aluminium yokes, protein-leather cushions over slow memory foam, and one volt ring so you can find them in a dark bag.</p>
+        </div>
+      </div>
+      <Marquee className="mono border-y border-bone/10 py-4 text-bone/70" items={["Aluminium", "Memory foam", "Graphene", "Bluetooth 6.0", "USB-C", "Repairable", "Swappable pads"]} sep="/" />
+    </section>
+  );
+}
+
+function useCountdown(target: number) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => { setNow(Date.now()); const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const d = Math.max(0, target - (now ?? target));
+  return [Math.floor(d / 864e5), Math.floor(d / 36e5) % 24, Math.floor(d / 6e4) % 60, Math.floor(d / 1e3) % 60].map((v) => String(v).padStart(2, "0"));
+}
+
+export function Reserve() {
+  const t = useCountdown(Date.UTC(2026, 11, 1, 12));
+  const [sent, setSent] = useState(false);
+  return (
+    <section id="reserve" className="bg-volt py-[clamp(88px,10vw,150px)] text-ink">
+      <div className="wrap grid gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <p className="mono">Drop 01 · 2,000 units</p>
+          <h2 className="display mt-5 text-[clamp(60px,10vw,170px)]" data-reveal="chars">Reserve.</h2>
+          <div className="mt-10 grid max-w-[560px] grid-cols-4 gap-3">
+            {["Days", "Hours", "Min", "Sec"].map((l, k) => <div key={l} className="rounded-[18px] bg-ink p-4 text-volt"><p className="display text-[clamp(36px,4vw,60px)] tabular-nums">{t[k]}</p><p className="mono mt-1 text-bone/70">{l}</p></div>)}
+          </div>
+        </div>
+        <div className="relative lg:col-span-5">
+          <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-[24px]"><Image src="/img/okt-chart-sm.webp" alt="" fill sizes="(min-width:1024px) 35vw, 100vw" className="object-cover" /></div>
+          <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="rounded-[24px] bg-chalk p-6">
+            <label htmlFor="em" className="mono text-mute">Email for your slot</label>
+            <div className="mt-3 flex gap-2"><input id="em" type="email" required placeholder="you@studio.com" className="min-w-0 flex-1 rounded-full border border-ink/15 bg-white/60 px-5 py-3 outline-none focus:border-ink" />
+              <button className="btn bg-ink text-bone">{sent ? "Held ✓" : <>Hold <Arrow /></>}</button></div>
+            <p className="mt-3 text-[13px] text-mute">€0 today. Refundable €49 deposit when your slot opens.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="bg-ink text-bone">
+      <div className="wrap flex flex-col justify-between gap-3 py-8 md:flex-row"><span className="mono text-bone/60">© 2026 Oktave. A concept by Anorix, not a real product.</span><span className="mono text-bone/60">Designed &amp; built by Anorix</span></div>
+      <p aria-hidden className="display select-none text-center text-[23vw] leading-[.8] text-volt">Oktave</p>
+    </footer>
+  );
+}
