@@ -64,6 +64,7 @@ function Cable() { const g = useMemo(() => { const P: THREE.Vector3[] = []; for 
   return (<group rotation-x={.4}><mesh geometry={g}><meshPhysicalMaterial color="#2b2b2d" roughness={.7} sheen={.6} sheenColor="#6a6a6e" sheenRoughness={.5} /></mesh>{[-1, 1].map((s) => <mesh key={s} position={[s * .9, s * .25, 0]}><cylinderGeometry args={[.08, .08, .3, 20]} /><meshPhysicalMaterial color="#9a9a9e" metalness={1} roughness={.3} /></mesh>)}</group>); }
 function Cushions() { const g = useMemo(() => { const x = new THREE.TorusGeometry(.6, .2, 28, 96); x.scale(1, 1, .7); return x; }, []); return (<group>{[-.5, .5].map((x, i) => <mesh key={x} geometry={g} position={[x, i * .15, -i * .2]} rotation={[.5, .3 - i * .5, 0]}><meshPhysicalMaterial color="#19191b" roughness={.95} sheen={1} sheenColor="#555" /></mesh>)}</group>); }
 
+function Fit({ z, k, skip }: { z: number; k: number; skip?: boolean }) { const { camera, size } = useThree(); useEffect(() => { if (skip) return; const a = size.width / Math.max(1, size.height); camera.position.z = z * Math.max(1, k / a); camera.updateProjectionMatrix(); }, [camera, size, z, k, skip]); return null; }
 export type Mode = "hero" | "view" | "close" | "case" | "cable" | "cushions";
 function Rig({ mode, finish, progress, explode }: { mode: Mode; finish: Finish; progress?: MutableRefObject<number>; explode?: boolean }) {
   const g = useRef<THREE.Group>(null!), m = useRef(mode === "hero" ? 0 : 1), ex = useRef(0), d = useRef({ on: false, x: 0, v: 0, a: 0 }), { gl, camera, size } = useThree();
@@ -82,7 +83,7 @@ export default function Headphones({ mode = "view", finish = "graphite", progres
   const el = useRef<HTMLDivElement>(null), [on, setOn] = useState(false);
   useEffect(() => { const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: "10% 0px" }); io.observe(el.current!); return () => io.disconnect(); }, []);
   return (<div ref={el} className={className} style={{ cursor: mode === "hero" ? undefined : "grab", touchAction: "pan-y" }}>
-    <Canvas frameloop={on ? "always" : "never"} dpr={[1, 1.75]} camera={{ position: [0, 0, z], fov: 30 }} gl={{ antialias: true, alpha: !bg, toneMapping: THREE.ACESFilmicToneMapping }}>
+    <Canvas frameloop={on ? "always" : "never"} dpr={[1, 1.75]} camera={{ position: [0, 0, z], fov: 30 }} gl={{ antialias: true, alpha: !bg, toneMapping: THREE.ACESFilmicToneMapping }}><Fit z={z} k={1.15} skip={mode === "close"} />
       {bg && <color attach="background" args={[bg]} />}<Env /><ambientLight intensity={.3} /><directionalLight position={[3, 6, 8]} intensity={1.6} /><directionalLight position={[-5, 1, -3]} intensity={.8} color="#e9ffd0" />
       <Rig mode={mode} finish={finish} progress={progress} explode={explode} /></Canvas></div>);
 }
