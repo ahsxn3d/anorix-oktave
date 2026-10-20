@@ -1,0 +1,3 @@
+import HP from "@/components/HP";
+export const metadata = { title: "Pre-order placed — Oktave" };
+export default function Page() { return <main className="bg-volt pb-24 pt-[clamp(110px,11vw,160px)]"><div className="wrap grid gap-8 lg:grid-cols-2 lg:items-center"><div><p className="mono">Order OK-DEMO-0001</p><h1 className="display mt-4 text-[clamp(64px,10vw,170px)]">You&apos;re in.</h1><p className="mt-6 max-w-[42ch] text-[18px]">Demo pre-order received. In the real store we would email your place in the queue. Nothing was charged.</p><a href="/" className="btn mt-8 bg-ink text-bone">Home</a></div><div className="relative h-[480px]"><HP finish="volt" z={7.4} /></div></div></main>; }

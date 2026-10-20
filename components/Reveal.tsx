@@ -1,8 +1,8 @@
 "use client";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Sequence from "./Sequence";
+const Headphones = dynamic(() => import("./Headphones"), { ssr: false });
 
 const notes = [["40 mm", "graphene driver"], ["62 h", "battery, ANC on"], ["248 g", "all-in weight"]];
 
@@ -10,12 +10,10 @@ export default function Reveal() {
   const root = useRef<HTMLElement>(null);
   const frame = useRef(0);
   const [ch, setCh] = useState(0);
-  const [fit, setFit] = useState(0.8);
-  useEffect(() => { const q = window.matchMedia("(max-width: 767px)"); const f = () => setFit(q.matches ? 0.86 : 0.8); f(); q.addEventListener("change", f); return () => q.removeEventListener("change", f); }, []);
   useEffect(() => {
     const bar = root.current!.querySelector<HTMLElement>(".r-bar");
     const st = ScrollTrigger.create({ trigger: root.current, start: "top top", end: "bottom bottom", onUpdate: (s) => {
-      frame.current = s.progress * 60; const c = s.progress < 0.22 ? 0 : s.progress < 0.6 ? 1 : 2; setCh((p) => (p === c ? p : c));
+      frame.current = s.progress; const c = s.progress < 0.22 ? 0 : s.progress < 0.6 ? 1 : 2; setCh((p) => (p === c ? p : c));
       if (bar) bar.style.transform = `scaleX(${s.progress})`;
     } });
     return () => st.kill();
@@ -25,11 +23,9 @@ export default function Reveal() {
     <section ref={root} className="relative h-[300vh] bg-bone">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#f9f9f7_0%,#efefec_60%)]" />
-        <Image src="/img/okt-mark.webp" alt="The Oktave mark: one continuous band" fill priority sizes="100vw" className="object-cover max-md:hidden" />
-        <Image src="/img/okt-mark-m.webp" alt="" fill priority sizes="100vw" className="object-cover md:hidden" />
-        <Sequence frame={frame} count={61} dir="/seq/d" mdir="/seq/m" fit={fit} lift={0.08} />
+        <Headphones mode="hero" progress={frame} z={8.4} />
         <div className="wrap pointer-events-none relative flex h-full flex-col justify-between pb-8 pt-24">
-          <div className="flex justify-between"><span className="mono text-mute">Prelaunch · Drop 01</span><span className="mono hidden text-mute md:block">Scroll</span></div>
+          <div className="flex justify-between"><span className="mono text-mute">Drop 01 · ships March 2027</span><span className="mono hidden text-mute md:block">Scroll</span></div>
           <div className="relative mb-8 mt-auto min-h-[200px]">
             <div className={`absolute inset-x-0 bottom-0 ${vis(0)}`}>
               <h1 className="display text-center text-[clamp(72px,17vw,280px)]"><span className="kit-mask"><span className="kit-line">Oktave</span></span></h1>

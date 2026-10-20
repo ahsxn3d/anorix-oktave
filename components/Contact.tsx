@@ -1,0 +1,4 @@
+"use client";
+import { useState } from "react";
+export default function Contact() { const [ok, setOk] = useState(false); const f = "w-full rounded-[18px] border border-ink/15 bg-white/60 px-5 py-3.5 text-[15px] outline-none focus:border-ink";
+  return ok ? <p className="display text-[48px]">Message received.<span className="mono mt-2 block text-mute">Demo form · nothing was sent</span></p> : <form onSubmit={(e) => { e.preventDefault(); setOk(true); }} className="grid gap-3 sm:grid-cols-2"><input required placeholder="Name" className={f} /><input required type="email" placeholder="Email" className={f} /><select className={`${f} sm:col-span-2`}>{["Order", "Repair", "Press", "Something else"].map((x) => <option key={x}>{x}</option>)}</select><textarea required rows={6} placeholder="Message" className={`${f} sm:col-span-2`} /><button className="btn justify-center bg-ink text-bone sm:col-span-2">Send</button></form>; }

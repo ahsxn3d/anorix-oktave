@@ -17,3 +17,6 @@ Geist, Geist Mono — SIL Open Font License 1.1, self-hosted.
 
 ## Libraries
 Next.js, React, Tailwind CSS, Lenis, GSAP (GSAP standard no-charge licence). Render tooling: three.js (MIT).
+
+## 2026-10 rebuild
+Image sequence and renders removed. H1, case, cable and cushions are procedural live three.js models (lathe/torus/tube, PBR + RoomEnvironment). Listen button synthesises a short chord with WebAudio. No images or sequences.

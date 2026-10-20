@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Motion from "@/components/kit/Motion";
+import WaveNav from "@/components/WaveNav";
+import EqFooter from "@/components/EqFooter";
+import { CartProvider } from "@/lib/commerce/cart";
 
 const display = localFont({ src: "../public/fonts/geist-latin-wght-normal.woff2", variable: "--f-display", weight: "100 900", display: "swap" });
 const sans = localFont({ src: "../public/fonts/geist-latin-wght-normal.woff2", variable: "--f-sans", weight: "100 900", display: "swap" });
@@ -14,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} /></head>
-      <body><Motion />{children}</body>
+      <body><CartProvider storeKey="oktave-bag"><Motion /><WaveNav />{children}<EqFooter /></CartProvider></body>
     </html>
   );
 }
